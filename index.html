@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy Frog Fishing - Ao Ếch Huyền Bí</title>
+    <meta name="description" content="Trải nghiệm game câu ếch phong cách fantasy huyền ảo, áp dụng vật lý ném parabol thực tế, chu kỳ ngày/đêm và thời tiết linh hoạt.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Ambient Sound & Sound FX Toggle -->
+    <div class="audio-controls">
+        <button id="btn-toggle-sound" title="Bật/Tắt âm thanh" class="control-btn-icon">
+            <i class="fas fa-volume-up"></i>
+        </button>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div id="app-container">
+        
+        <!-- ================= MAIN MENU SCREEN ================= -->
+        <section id="menu-screen" class="screen active">
+            <div class="game-logo">
+                <h1 class="logo-text">FANTASY<span>FROG</span></h1>
+                <p class="logo-subtext">Ao Ếch Huyền Bí - Câu Cá Kỳ Ảo</p>
+            </div>
+
+            <div class="menu-card glassmorphism">
+                <div class="section-title">Chọn Chế Độ Chơi</div>
+                <div class="mode-selection">
+                    <button class="mode-btn active" id="btn-mode-time" data-mode="time">
+                        <span class="mode-icon">⏳</span>
+                        <span class="mode-title">Chạy Đua Thời Gian</span>
+                        <span class="mode-desc">Đạt điểm tối đa trong 90 giây. Thử thách phản xạ cực hạn!</span>
+                    </button>
+                    <button class="mode-btn" id="btn-mode-survival" data-mode="survival">
+                        <span class="mode-icon">❤️</span>
+                        <span class="mode-title">Thử Thách Sinh Tồn</span>
+                        <span class="mode-desc">Bắt đầu với 10 mồi. Câu hỏng trừ 1 mồi. Trúng được cộng thêm mồi/thời gian!</span>
+                    </button>
+                </div>
+
+                <div class="section-title">Học Thuyết Trò Chơi (Vật Lý & Sinh Học)</div>
+                <div class="game-info-mini">
+                    <div class="info-tag">🪐 Gia tốc trọng trường: 9.8m/s²</div>
+                    <div class="info-tag">💨 Gió giật thay đổi theo lượt</div>
+                    <div class="info-tag">⛈️ Trời mưa: ếch nhảy nhiều nhưng dễ trơn trượt</div>
+                    <div class="info-tag">🌙 Ban đêm: xuất hiện Ếch Ma Thuật phát sáng</div>
+                </div>
+
+                <!-- Action Button -->
+                <button id="btn-start-game" class="btn btn-primary btn-glow">BƯỚC VÀO THẾ GIỚI KỲ ẢO <i class="fas fa-arrow-right ml-2"></i></button>
+            </div>
+
+            <!-- How To Play Info -->
+            <div class="instructions-card glassmorphism">
+                <h3><i class="fas fa-compass"></i> Hướng Dẫn Điều Khiển</h3>
+                <div class="controls-grid">
+                    <div class="control-item"><span>Nhấn Giữ & Kéo Chuột</span><span>Căn Góc và Lực Ném Mồi (Đường Parabol)</span></div>
+                    <div class="control-item"><span>Thả Chuột Trái</span><span>Quăng Mồi Câu</span></div>
+                    <div class="control-item"><span>Click chuột liên tục</span><span>Kéo lưỡi câu nhanh hơn / Giằng co khi bắt Boss</span></div>
+                    <div class="control-item"><span>Phím A / D hoặc 1 / 2 / 3 / 4</span><span>Chuyển đổi các loại Mồi Câu nhanh</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= GAMEPLAY SCREEN ================= -->
+        <section id="gameplay-screen" class="screen">
+            <!-- HUD TOP -->
+            <header class="game-hud glassmorphism">
+                <!-- HUD Left (Mode & Status) -->
+                <div class="hud-left">
+                    <div class="stat-box">
+                        <span class="stat-label">Thời gian</span>
+                        <span class="stat-value" id="hud-timer">90s</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Điểm số</span>
+                        <span class="stat-value" id="hud-score">000</span>
+                    </div>
+                    <div class="stat-box gold-box">
+                        <span class="stat-label">Cổ Vật (Vàng)</span>
+                        <span class="stat-value" id="hud-gold"><i class="fas fa-coins text-gold"></i> 0</span>
+                    </div>
+                </div>
+
+                <!-- HUD Middle (Environmental status) -->
+                <div class="hud-center">
+                    <div class="env-widget" id="weather-indicator">
+                        <span id="env-weather-icon">☀️</span>
+                        <span id="env-weather-text">Trời Nắng</span>
+                    </div>
+                    <div class="env-widget" id="time-indicator">
+                        <span id="env-time-icon">🌅</span>
+                        <span id="env-time-text">Bình Minh</span>
+                    </div>
+                    <!-- Wind compass -->
+                    <div class="env-widget wind-compass" id="wind-indicator">
+                        <div class="wind-arrow-box">
+                            <i class="fas fa-long-arrow-alt-up" id="wind-arrow"></i>
+                        </div>
+                        <span id="env-wind-text">Lặng gió</span>
+                    </div>
+                </div>
+
+                <!-- HUD Right (Bait & Upgrades Trigger) -->
+                <div class="hud-right">
+                    <!-- Shop trigger button -->
+                    <button id="btn-open-shop" class="btn btn-secondary btn-shop-glow"><i class="fas fa-shopping-bag"></i> Cửa Hàng</button>
+                    <!-- Pause/Exit button -->
+                    <button id="btn-pause-game" class="btn btn-danger-icon"><i class="fas fa-pause"></i></button>
+                </div>
+            </header>
+
+            <!-- BAIT SELECTION BAR -->
+            <div id="bait-panel" class="glassmorphism animate-slide-in">
+                <span class="bait-panel-title">MỒI CÂU:</span>
+                <div class="bait-list">
+                    <button class="bait-item active" id="bait-worm" data-bait="worm" title="Giun đất - Cơ bản, vô hạn">
+                        <span class="bait-ico">🐛</span>
+                        <span class="bait-name">Giun đất</span>
+                        <span class="bait-count">∞</span>
+                    </button>
+                    <button class="bait-item" id="bait-fly" data-bait="fly" title="Ruồi - Dụ Ếch Ninja cực tốt">
+                        <span class="bait-ico">🪰</span>
+                        <span class="bait-name">Ruồi bay</span>
+                        <span class="bait-count" id="count-fly">5</span>
+                    </button>
+                    <button class="bait-item" id="bait-spider" data-bait="spider" title="Nhện giả - Kích thích Boss và Ếch to dưới sen">
+                        <span class="bait-ico">🕷️</span>
+                        <span class="bait-name">Nhện giả</span>
+                        <span class="bait-count" id="count-spider">3</span>
+                    </button>
+                    <button class="bait-item" id="bait-firefly" data-bait="firefly" title="Đom đóm - Phát sáng, bắt buộc phải dùng để câu Ếch Ma Thuật ban đêm">
+                        <span class="bait-ico">🪱</span>
+                        <span class="bait-name">Đom đóm</span>
+                        <span class="bait-count" id="count-firefly">2</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- MAIN GAME VIEWPORT -->
+            <main class="game-viewport-container">
+                <canvas id="gameCanvas" width="960" height="540"></canvas>
+
+                <!-- REAL-TIME TENSION BAR (Displays during reeling/pulling) -->
+                <div id="tension-meter-container" class="glassmorphism hidden">
+                    <div class="tension-label">LỰC CĂNG DÂY CÂU (Snapping Threat!)</div>
+                    <div class="tension-bar-wrapper">
+                        <div class="tension-fill" id="tension-fill-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- DYNAMIC BOSS BATTLE OVERLAY (Tug-of-War mini game) -->
+                <div id="boss-battle-overlay" class="overlay-game-inside hidden">
+                    <div class="boss-card glassmorphism">
+                        <div class="boss-warning-header animate-flash"><i class="fas fa-exclamation-triangle"></i> PHÁT HIỆN BOSS KHỔNG LỒ! <i class="fas fa-exclamation-triangle"></i></div>
+                        <p class="boss-instructions">Nhấp chuột liên tục để giữ lực kéo trong vùng xanh lá an toàn! Tránh kéo quá đà làm đứt dây hoặc lỏng tay làm sẩy Boss.</p>
+                        <div class="tug-of-war-ui">
+                            <!-- Minigame meter -->
+                            <div class="tug-gauge">
+                                <div class="tug-zone safe-zone" id="boss-safe-zone"></div>
+                                <div class="tug-marker" id="boss-tension-marker"></div>
+                            </div>
+                            <div class="tug-stats">
+                                <span>Thể lực Boss: <strong id="boss-hp">100%</strong></span>
+                                <span>Độ căng dây: <strong id="boss-tension-val">0%</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- STATS COUNTER FOOTER (FPS, Physics stats) -->
+            <footer class="game-footer-dashboard glassmorphism">
+                <div class="dashboard-item"><i class="fas fa-tachometer-alt"></i> FPS: <span id="perf-fps">120</span></div>
+                <div class="dashboard-item"><i class="fas fa-project-diagram"></i> Thực thể: <span id="perf-entities">0</span></div>
+                <div class="dashboard-item"><i class="fas fa-wind"></i> Sức gió: <span id="perf-wind">0.0 m/s</span></div>
+                <div class="dashboard-item"><i class="fas fa-anchor"></i> Cấp câu: <span id="perf-rod-lvl">Lvl 1</span> | Dây: <span id="perf-line-lvl">Lvl 1</span></div>
+            </footer>
+        </section>
+
+        <!-- ================= OVERLAYS ================= -->
+        
+        <!-- Pause Overlay -->
+        <div id="pause-overlay" class="overlay">
+            <div class="overlay-card glassmorphism popup-anim">
+                <h2>BẢN ĐỒ TẠM DỪNG</h2>
+                <p>Môi trường ao sen huyền ảo tạm thời được ngưng đọng.</p>
+                <div class="overlay-buttons">
+                    <button id="btn-resume-game" class="btn btn-primary btn-glow">TIẾP TỤC</button>
+                    <button id="btn-exit-to-menu" class="btn btn-danger">TRỞ VỀ MENU CHÍNH</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- UPGRADE SHOP OVERLAY -->
+        <div id="shop-overlay" class="overlay">
+            <div class="overlay-card shop-card glassmorphism popup-anim">
+                <div class="shop-header">
+                    <h2><i class="fas fa-shopping-cart text-gold"></i> CỬA HÀNG TRANG BỊ MA THUẬT</h2>
+                    <div class="shop-money-info">Vàng của bạn: <span id="shop-gold-val"><i class="fas fa-coins text-gold"></i> 0</span></div>
+                </div>
+
+                <div class="shop-grid">
+                    <!-- Column 1: Rod upgrade -->
+                    <div class="shop-item-card glassmorphism">
+                        <div class="shop-item-icon">🎣</div>
+                        <h3 class="shop-item-title">Cần Câu Thần thoại</h3>
+                        <p class="shop-item-desc">Tăng lực ném tối đa giúp lưỡi câu bay xa hơn và hồi dây nhanh hơn.</p>
+                        <div class="shop-item-stat">Lực ném: <span id="shop-rod-stat">100%</span></div>
+                        <button class="btn btn-upgrade btn-glow-gold" id="btn-upgrade-rod">
+                            Nâng Cấp Lên Lvl <span id="rod-next-lvl">2</span> (<span id="rod-cost">100</span> Vàng)
+                        </button>
+                    </div>
+
+                    <!-- Column 2: Line upgrade -->
+                    <div class="shop-item-card glassmorphism">
+                        <div class="shop-item-icon">🧵</div>
+                        <h3 class="shop-item-title">Dây Câu Tơ Nhện</h3>
+                        <p class="shop-item-desc">Lực kéo tối đa cao hơn, giúp giữ dây câu chịu lực nặng gấp đôi mà không đứt.</p>
+                        <div class="shop-item-stat">Sức chịu tải: <span id="shop-line-stat">100%</span></div>
+                        <button class="btn btn-upgrade btn-glow-gold" id="btn-upgrade-line">
+                            Nâng Cấp Lên Lvl <span id="line-next-lvl">2</span> (<span id="line-cost">100</span> Vàng)
+                        </button>
+                    </div>
+
+                    <!-- Column 3: Net upgrade -->
+                    <div class="shop-item-card glassmorphism">
+                        <div class="shop-item-icon">🕸️</div>
+                        <h3 class="shop-item-title">Vợt / Lưới Bắt Hộ Trợ</h3>
+                        <p class="shop-item-desc">Tăng bán kính bắt của lưỡi câu giúp bạn dễ dàng nhắm trúng các chú ếch nhỏ nhanh.</p>
+                        <div class="shop-item-stat">Bán kính bắt: <span id="shop-net-stat">100%</span></div>
+                        <button class="btn btn-upgrade btn-glow-gold" id="btn-upgrade-net">
+                            Nâng Cấp Lên Lvl <span id="net-next-lvl">2</span> (<span id="net-cost">100</span> Vàng)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="shop-bait-section">
+                    <div class="section-title">Mua Mồi Câu Đặc Biệt</div>
+                    <div class="shop-bait-grid">
+                        <div class="shop-bait-card">
+                            <span>🪰 Mồi Ruồi (x5)</span>
+                            <button class="btn btn-buy-bait" id="btn-buy-fly" data-cost="30">Mua: 30 Vàng</button>
+                        </div>
+                        <div class="shop-bait-card">
+                            <span>🕷️ Mồi Nhện (x3)</span>
+                            <button class="btn btn-buy-bait" id="btn-buy-spider" data-cost="40">Mua: 40 Vàng</button>
+                        </div>
+                        <div class="shop-bait-card">
+                            <span>🪱 Mồi Đom Đóm (x2)</span>
+                            <button class="btn btn-buy-bait" id="btn-buy-firefly" data-cost="50">Mua: 50 Vàng</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="shop-footer">
+                    <button id="btn-close-shop" class="btn btn-secondary">ĐÓNG CỬA HÀNG</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Overlay -->
+        <div id="gameover-overlay" class="overlay">
+            <div class="overlay-card glassmorphism popup-anim border-red">
+                <div class="overlay-icon red-glow">🍂</div>
+                <h2 class="text-red">HẾT LƯỢT CHƠI</h2>
+                <p>Thử thách của bạn đã kết thúc. Hãy xem chiến tích bạn câu được!</p>
+                <div class="stats-summary">
+                    <div class="summary-item"><span>Chế độ chơi:</span><span id="over-mode" class="highlight">Chạy Đua</span></div>
+                    <div class="summary-item"><span>Điểm số đạt được:</span><span id="over-score" class="highlight">0</span></div>
+                    <div class="summary-item"><span>Vàng tích luỹ còn dư:</span><span id="over-gold" class="highlight-gold">0</span></div>
+                </div>
+                <div class="overlay-buttons">
+                    <button id="btn-restart-dead" class="btn btn-primary btn-glow">CHƠI LẠI</button>
+                    <button id="btn-exit-dead" class="btn btn-secondary">TRỞ VỀ MENU CHÍNH</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script File -->
+    <script src="app.js"></script>
+</body>
+</html>
