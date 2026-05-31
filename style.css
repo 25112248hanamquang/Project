@@ -255,31 +255,269 @@ body {
    1. MAIN MENU SCREEN
    ========================================================================== */
 #menu-screen {
-    background: linear-gradient(rgba(10, 8, 24, 0.65), rgba(10, 8, 24, 0.85)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="white" opacity="0.3"/></svg>');
-    background-size: cover;
+    background:
+        radial-gradient(circle at 18% 12%, rgba(96, 235, 208, 0.16) 0 12%, transparent 34%),
+        radial-gradient(circle at 76% 22%, rgba(255, 215, 117, 0.16) 0 8%, transparent 30%),
+        linear-gradient(180deg, #071428 0%, #0a1834 42%, #061321 70%, #02050c 100%);
     justify-content: center;
     align-items: center;
     padding: 40px;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+#menu-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image:
+        radial-gradient(circle, rgba(255, 255, 255, 0.78) 0 1px, transparent 1.6px),
+        radial-gradient(circle, rgba(119, 240, 255, 0.55) 0 1px, transparent 1.7px);
+    background-size: 86px 86px, 132px 132px;
+    background-position: 12px 22px, 40px 10px;
+    opacity: 0.42;
+    animation: star-drift 18s linear infinite;
+}
+
+#menu-screen::after {
+    content: '';
+    position: absolute;
+    inset: auto -8% 0;
+    height: 44%;
+    z-index: 1;
+    background:
+        linear-gradient(180deg, rgba(9, 60, 84, 0.1) 0%, rgba(11, 158, 178, 0.28) 32%, rgba(0, 13, 22, 0.82) 100%),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px 17px);
+    clip-path: ellipse(74% 62% at 50% 78%);
+    filter: blur(0.2px);
+    animation: water-shimmer 6s ease-in-out infinite;
+}
+
+.menu-scene {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.game-logo,
+.menu-card,
+.instructions-card {
+    position: relative;
+    z-index: 3;
+}
+
+.moon {
+    position: absolute;
+    top: 38px;
+    right: 112px;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 32%, #fff8cb 0 16%, #f8dd8d 44%, #b78643 100%);
+    box-shadow: 0 0 34px rgba(255, 222, 132, 0.55), 0 0 110px rgba(255, 229, 145, 0.2);
+}
+
+.mountain {
+    position: absolute;
+    bottom: 178px;
+    width: 520px;
+    height: 172px;
+    clip-path: polygon(0 100%, 18% 54%, 34% 84%, 52% 26%, 71% 73%, 86% 40%, 100% 100%);
+}
+
+.mountain-back {
+    left: -68px;
+    background: linear-gradient(180deg, rgba(34, 80, 96, 0.58), rgba(7, 30, 44, 0.84));
+    opacity: 0.72;
+}
+
+.mountain-front {
+    right: -92px;
+    bottom: 154px;
+    background: linear-gradient(180deg, rgba(17, 75, 75, 0.72), rgba(4, 23, 31, 0.94));
+}
+
+.pond-glow {
+    position: absolute;
+    left: 50%;
+    bottom: 24px;
+    width: 620px;
+    height: 180px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(42, 244, 220, 0.18), rgba(10, 54, 72, 0.08) 48%, transparent 72%);
+    filter: blur(4px);
+}
+
+.water-ripple {
+    position: absolute;
+    bottom: 76px;
+    width: 270px;
+    height: 34px;
+    border: 1px solid rgba(100, 245, 255, 0.26);
+    border-radius: 50%;
+    opacity: 0.75;
+    animation: ripple-pulse 4.8s ease-in-out infinite;
+}
+
+.ripple-one {
+    left: 104px;
+}
+
+.ripple-two {
+    right: 112px;
+    bottom: 112px;
+    animation-delay: -2s;
+}
+
+.lily-pad {
+    position: absolute;
+    width: 92px;
+    height: 42px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 28% 32%, #7cf08d 0 8%, #208c50 36%, #0d4c35 100%);
+    box-shadow: inset -14px -5px 14px rgba(0, 32, 22, 0.38), 0 10px 22px rgba(0, 0, 0, 0.35);
+    transform: rotate(-7deg);
+}
+
+.lily-pad::after {
+    content: '';
+    position: absolute;
+    right: 12px;
+    top: 0;
+    width: 24px;
+    height: 24px;
+    background: #05111a;
+    clip-path: polygon(100% 0, 0 54%, 100% 100%);
+}
+
+.lily-one {
+    left: 76px;
+    bottom: 82px;
+}
+
+.lily-two {
+    right: 130px;
+    bottom: 72px;
+    width: 118px;
+    height: 52px;
+    transform: rotate(8deg);
+}
+
+.lily-three {
+    left: 446px;
+    bottom: 28px;
+    width: 78px;
+    height: 36px;
+    transform: rotate(13deg);
+}
+
+.frog-perch {
+    position: absolute;
+    right: 174px;
+    bottom: 106px;
+    width: 68px;
+    height: 44px;
+    border-radius: 48% 48% 42% 42%;
+    background: radial-gradient(circle at 35% 24%, #b7ff71 0 11%, #47c955 38%, #106b3c 100%);
+    box-shadow: inset -10px -8px 12px rgba(0, 52, 31, 0.36), 0 0 20px rgba(87, 255, 108, 0.26);
+    animation: frog-breathe 3.2s ease-in-out infinite;
+}
+
+.frog-eye {
+    position: absolute;
+    top: -7px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 55%, #07130b 0 24%, #fff6a9 27% 50%, #56cf5f 53%);
+}
+
+.eye-left {
+    left: 13px;
+}
+
+.eye-right {
+    right: 13px;
+}
+
+.reeds {
+    position: absolute;
+    bottom: 36px;
+    width: 120px;
+    height: 150px;
+    background:
+        linear-gradient(83deg, transparent 0 19%, #194e36 20% 22%, transparent 23%),
+        linear-gradient(97deg, transparent 0 42%, #2d6f42 43% 45%, transparent 46%),
+        linear-gradient(77deg, transparent 0 64%, #174730 65% 67%, transparent 68%),
+        radial-gradient(ellipse at 22% 18%, #a0713a 0 4%, transparent 5%),
+        radial-gradient(ellipse at 45% 7%, #bd8842 0 4%, transparent 5%),
+        radial-gradient(ellipse at 67% 25%, #926431 0 4%, transparent 5%);
+    opacity: 0.92;
+}
+
+.reeds-left {
+    left: 18px;
+}
+
+.reeds-right {
+    right: 22px;
+    transform: scaleX(-1);
+}
+
+.firefly {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff7a8;
+    box-shadow: 0 0 12px #ffe66b, 0 0 24px rgba(77, 255, 185, 0.55);
+    animation: firefly-float 5.8s ease-in-out infinite;
+}
+
+.firefly-one {
+    left: 170px;
+    top: 176px;
+}
+
+.firefly-two {
+    right: 216px;
+    top: 252px;
+    animation-delay: -1.4s;
+}
+
+.firefly-three {
+    left: 292px;
+    bottom: 206px;
+    animation-delay: -2.6s;
+}
+
+.firefly-four {
+    right: 332px;
+    top: 128px;
+    animation-delay: -3.8s;
 }
 
 .game-logo {
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 18px;
     animation: floating-logo 4s ease-in-out infinite;
 }
 
 .logo-text {
     font-family: 'Cinzel', serif;
-    font-size: 48px;
+    font-size: 54px;
     font-weight: 900;
     letter-spacing: 4px;
     color: var(--text-main);
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.1), 0 0 30px rgba(189, 0, 255, 0.3);
+    text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 255, 255, 0.16), 0 0 34px rgba(0, 229, 255, 0.28);
 }
 
 .logo-text span {
-    color: var(--neon-blue);
-    text-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
+    color: #8cff76;
+    text-shadow: 0 0 16px rgba(140, 255, 118, 0.72), 0 0 34px rgba(0, 229, 255, 0.36);
 }
 
 .logo-subtext {
@@ -292,10 +530,37 @@ body {
 
 .menu-card {
     width: 600px;
-    padding: 30px;
+    padding: 26px;
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    background: linear-gradient(180deg, rgba(11, 29, 43, 0.82), rgba(8, 13, 27, 0.7));
+    border-color: rgba(115, 244, 211, 0.2);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 34px rgba(42, 244, 220, 0.11);
+}
+
+.menu-card::before {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    border: 1px solid rgba(255, 215, 117, 0.12);
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+.menu-card::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(120deg, transparent 0 22%, rgba(255, 255, 255, 0.08) 38%, transparent 56%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.menu-card:hover::after {
+    opacity: 1;
 }
 
 .section-title {
@@ -318,8 +583,8 @@ body {
 
 .mode-btn {
     flex: 1;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(6, 30, 38, 0.6);
+    border: 1px solid rgba(109, 238, 218, 0.1);
     border-radius: 12px;
     padding: 15px;
     cursor: pointer;
@@ -331,15 +596,15 @@ body {
 }
 
 .mode-btn:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(12, 56, 65, 0.76);
+    border-color: rgba(118, 255, 218, 0.24);
     transform: translateY(-2px);
 }
 
 .mode-btn.active {
-    background: rgba(189, 0, 255, 0.08);
-    border-color: var(--neon-purple);
-    box-shadow: inset 0 0 10px rgba(189, 0, 255, 0.15), 0 0 15px rgba(189, 0, 255, 0.15);
+    background: linear-gradient(180deg, rgba(37, 118, 86, 0.34), rgba(10, 54, 70, 0.74));
+    border-color: #7cffb0;
+    box-shadow: inset 0 0 12px rgba(124, 255, 176, 0.14), 0 0 18px rgba(42, 244, 220, 0.18);
 }
 
 .mode-icon {
@@ -367,8 +632,8 @@ body {
 }
 
 .info-tag {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    background: rgba(8, 42, 52, 0.56);
+    border: 1px solid rgba(135, 245, 216, 0.1);
     border-radius: 8px;
     padding: 8px 12px;
     font-size: 11px;
@@ -379,12 +644,16 @@ body {
     font-size: 15px;
     padding: 15px;
     border-radius: 12px;
+    background: linear-gradient(135deg, #16c784 0%, #0088ff 52%, #6d3dff 100%);
+    box-shadow: 0 10px 26px rgba(0, 136, 255, 0.24), 0 0 20px rgba(22, 199, 132, 0.22);
 }
 
 .instructions-card {
     width: 600px;
     margin-top: 15px;
     padding: 15px 20px;
+    background: rgba(5, 18, 27, 0.66);
+    border-color: rgba(117, 232, 221, 0.14);
 }
 
 .instructions-card h3 {
@@ -590,15 +859,37 @@ body {
     margin: 0 10px;
     border-radius: 14px;
     overflow: hidden;
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.82), 0 0 24px rgba(0, 229, 255, 0.08);
+    border: 1px solid rgba(111, 232, 255, 0.12);
     background: #020205;
+}
+
+.game-viewport-container::before,
+.game-viewport-container::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.game-viewport-container::before {
+    background:
+        radial-gradient(ellipse at center, transparent 0 56%, rgba(0, 0, 0, 0.34) 100%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 12%, transparent 84%, rgba(0, 229, 255, 0.08));
+}
+
+.game-viewport-container::after {
+    opacity: 0.25;
+    background: repeating-linear-gradient(180deg, transparent 0 11px, rgba(255, 255, 255, 0.035) 12px, transparent 13px);
+    mix-blend-mode: screen;
 }
 
 #gameCanvas {
     display: block;
     width: 100%;
     height: 100%;
+    filter: saturate(1.12) contrast(1.04);
 }
 
 /* Physics HUD Overlay indicators */
@@ -1005,6 +1296,33 @@ body {
 @keyframes floating-logo {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-8px); }
+}
+
+@keyframes star-drift {
+    from { background-position: 12px 22px, 40px 10px; }
+    to { background-position: 98px 108px, 172px 142px; }
+}
+
+@keyframes water-shimmer {
+    0%, 100% { transform: translateY(0) scaleX(1); opacity: 0.92; }
+    50% { transform: translateY(4px) scaleX(1.02); opacity: 1; }
+}
+
+@keyframes ripple-pulse {
+    0%, 100% { transform: scaleX(0.92); opacity: 0.35; }
+    50% { transform: scaleX(1.08); opacity: 0.78; }
+}
+
+@keyframes frog-breathe {
+    0%, 100% { transform: translateY(0) scaleY(1); }
+    50% { transform: translateY(2px) scaleY(0.94); }
+}
+
+@keyframes firefly-float {
+    0%, 100% { transform: translate(0, 0); opacity: 0.4; }
+    25% { transform: translate(18px, -12px); opacity: 1; }
+    50% { transform: translate(4px, -28px); opacity: 0.55; }
+    75% { transform: translate(-16px, -10px); opacity: 0.9; }
 }
 
 @keyframes fade-in {

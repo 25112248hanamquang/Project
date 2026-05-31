@@ -369,6 +369,15 @@ class Frog extends GameObject {
         const fy = this.y + hopYOffset;
         const fw = this.width;
         const fh = this.height;
+        const squash = this.isHopping ? 1 - Math.sin(this.hopProgress) * 0.08 : 1;
+
+        ctx.save();
+        ctx.globalAlpha *= 0.34;
+        ctx.fillStyle = '#02040a';
+        ctx.beginPath();
+        ctx.ellipse(fx + fw / 2, this.y + fh + 7, fw * 0.44, fh * 0.16, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
 
         // VẼ HIỆU ỨNG PHÁT SÁNG CHO CÁC LOẠI ẾCH QUÝ HIẾM
         if (this.type === 'magical' || this.type === 'boss' || this.type === 'rare') {
@@ -377,12 +386,34 @@ class Frog extends GameObject {
         }
 
         // Vẽ thân ếch (Dạng Vector mượt mà chất lượng cao)
-        ctx.fillStyle = this.color;
+        const bodyGradient = ctx.createRadialGradient(
+            fx + fw * 0.32,
+            fy + fh * 0.28,
+            2,
+            fx + fw * 0.5,
+            fy + fh * 0.55,
+            Math.max(fw, fh) * 0.55
+        );
+        bodyGradient.addColorStop(0, '#d8ff9b');
+        bodyGradient.addColorStop(0.24, this.color);
+        bodyGradient.addColorStop(1, this.type === 'poison' ? '#40105f' : '#06472e');
+        ctx.fillStyle = bodyGradient;
         
         // Thân chính (Bầu dục dẹt)
         ctx.beginPath();
-        ctx.ellipse(fx + fw/2, fy + fh/2 + 2, fw/2, fh/2 - 2, 0, 0, Math.PI * 2);
+        ctx.ellipse(fx + fw/2, fy + fh/2 + 2, fw/2, (fh/2 - 2) * squash, 0, 0, Math.PI * 2);
         ctx.fill();
+
+        ctx.globalAlpha *= 0.55;
+        ctx.fillStyle = this.type === 'poison' ? '#ff7ad9' : '#b8ff7d';
+        for (let i = 0; i < 4; i++) {
+            const spotX = fx + fw * (0.25 + i * 0.16);
+            const spotY = fy + fh * (0.32 + (i % 2) * 0.22);
+            ctx.beginPath();
+            ctx.ellipse(spotX, spotY, fw * 0.055, fh * 0.05, 0.4, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.globalAlpha = this.diveProgress;
 
         // Ếch độc thì vẽ gai nhọn màu hồng neon phát sáng
         if (this.type === 'poison') {
@@ -412,6 +443,7 @@ class Frog extends GameObject {
         // Hai đùi ếch
         ctx.beginPath();
         // Đùi trái
+        ctx.fillStyle = bodyGradient;
         ctx.ellipse(fx + 6, fy + fh - 8, 8, 12, -Math.PI / 4, 0, Math.PI * 2);
         // Đùi phải
         ctx.ellipse(fx + fw - 6, fy + fh - 8, 8, 12, Math.PI / 4, 0, Math.PI * 2);
@@ -913,6 +945,32 @@ class Game {
         this.dayNightTimer = 30; // 30s chuyển đổi một lần
         this.weatherTimer = 40;  // 40s đổi thời tiết
         this.rainDrops = [];
+        this.scenery = {
+            farStars: Array.from({ length: 54 }, () => ({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * 190 + 12,
+                r: Math.random() * 1.4 + 0.35,
+                twinkle: Math.random() * Math.PI * 2
+            })),
+            clouds: Array.from({ length: 5 }, (_, i) => ({
+                x: 70 + i * 190 + Math.random() * 60,
+                y: 36 + Math.random() * 95,
+                scale: 0.75 + Math.random() * 0.55,
+                speed: 0.018 + Math.random() * 0.018
+            })),
+            reeds: Array.from({ length: 42 }, (_, i) => ({
+                x: i < 21 ? 8 + i * 9 : 760 + (i - 21) * 10,
+                h: 30 + Math.random() * 56,
+                lean: (Math.random() - 0.5) * 18,
+                phase: Math.random() * Math.PI * 2
+            })),
+            pebbles: Array.from({ length: 36 }, () => ({
+                x: Math.random() * this.canvas.width,
+                y: this.waterY + 74 + Math.random() * 128,
+                r: 1.2 + Math.random() * 3.8,
+                tone: Math.random()
+            }))
+        };
 
         // Hệ thống Minigame câu Boss
         this.activeBossBattle = false;
@@ -1706,6 +1764,7 @@ class Game {
 
     drawEnvironmentBackground(ctx, w, h) {
         ctx.save();
+        const now = performance.now();
         
         // A. Nền bầu trời theo Ngày/Đêm
         let skyGradient = ctx.createLinearGradient(0, 0, 0, this.waterY);
@@ -1724,6 +1783,8 @@ class Game {
         }
         ctx.fillStyle = skyGradient;
         ctx.fillRect(0, 0, w, this.waterY);
+        this.drawSkyDetails(ctx, w, now);
+        this.drawDistantBanks(ctx, w, now);
 
         // Vẽ Mặt Trăng hoặc Mặt Trời huyền bí
         if (this.timeOfDay === 'night') {
@@ -1760,18 +1821,125 @@ class Game {
         }
         ctx.fillStyle = waterGradient;
         ctx.fillRect(0, this.waterY, w, h - this.waterY);
+        this.drawUnderwaterDetails(ctx, w, h, now);
 
         // C. Vẽ các gợn sóng nước phát sáng động
         ctx.strokeStyle = this.timeOfDay === 'night' ? 'rgba(0, 240, 255, 0.08)' : 'rgba(255, 255, 255, 0.06)';
         ctx.lineWidth = 1.0;
         for (let i = 0; i < 6; i++) {
             const waveY = this.waterY + 30 + i * 35;
-            const waveOffset = Math.sin(performance.now() / 1000 + i) * 20;
+            const waveOffset = Math.sin(now / 1000 + i) * 20;
             ctx.beginPath();
             ctx.moveTo(0, waveY);
-            ctx.bezierCurveTo(240, waveY - 4, 480, waveY + 4, 960, waveY);
+            ctx.bezierCurveTo(180 + waveOffset, waveY - 5, 520 - waveOffset, waveY + 6, 960, waveY);
             ctx.stroke();
         }
+
+        ctx.strokeStyle = this.timeOfDay === 'night' ? 'rgba(90, 244, 255, 0.36)' : 'rgba(255, 255, 255, 0.26)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, this.waterY + 2);
+        for (let x = 0; x <= w; x += 48) {
+            const y = this.waterY + Math.sin(now / 420 + x * 0.035) * 2.4;
+            ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+    drawSkyDetails(ctx, w, now) {
+        ctx.save();
+
+        if (this.timeOfDay === 'night') {
+            this.scenery.farStars.forEach(star => {
+                const alpha = 0.35 + Math.sin(now / 700 + star.twinkle) * 0.28;
+                ctx.fillStyle = `rgba(220, 250, 255, ${Math.max(0.12, alpha)})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        } else {
+            this.scenery.clouds.forEach(cloud => {
+                const driftX = (cloud.x + now * cloud.speed) % (w + 180) - 90;
+                const shade = this.timeOfDay === 'evening' ? 'rgba(255, 202, 213, 0.23)' : 'rgba(255, 255, 255, 0.18)';
+                ctx.fillStyle = shade;
+                ctx.beginPath();
+                ctx.ellipse(driftX, cloud.y, 46 * cloud.scale, 14 * cloud.scale, 0, 0, Math.PI * 2);
+                ctx.ellipse(driftX + 34 * cloud.scale, cloud.y + 4, 34 * cloud.scale, 11 * cloud.scale, 0, 0, Math.PI * 2);
+                ctx.ellipse(driftX - 34 * cloud.scale, cloud.y + 3, 28 * cloud.scale, 10 * cloud.scale, 0, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        ctx.restore();
+    }
+
+    drawDistantBanks(ctx, w, now) {
+        ctx.save();
+        const bankTop = this.waterY - 92;
+
+        ctx.fillStyle = this.timeOfDay === 'night' ? 'rgba(6, 20, 33, 0.9)' : 'rgba(19, 56, 47, 0.82)';
+        ctx.beginPath();
+        ctx.moveTo(0, this.waterY);
+        ctx.lineTo(0, bankTop + 30);
+        ctx.bezierCurveTo(150, bankTop - 18, 310, bankTop + 38, 470, bankTop - 6);
+        ctx.bezierCurveTo(640, bankTop - 50, 780, bankTop + 30, w, bankTop - 18);
+        ctx.lineTo(w, this.waterY);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = this.timeOfDay === 'night' ? 'rgba(9, 44, 39, 0.95)' : 'rgba(27, 85, 51, 0.92)';
+        ctx.beginPath();
+        ctx.moveTo(0, this.waterY);
+        ctx.bezierCurveTo(120, this.waterY - 42, 270, this.waterY - 18, 390, this.waterY - 54);
+        ctx.bezierCurveTo(550, this.waterY - 102, 700, this.waterY - 14, w, this.waterY - 58);
+        ctx.lineTo(w, this.waterY + 12);
+        ctx.lineTo(0, this.waterY + 12);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = 'rgba(143, 255, 190, 0.18)';
+        ctx.lineWidth = 1.1;
+        this.scenery.reeds.forEach(reed => {
+            const sway = Math.sin(now / 900 + reed.phase) * 4;
+            ctx.beginPath();
+            ctx.moveTo(reed.x, this.waterY + 4);
+            ctx.quadraticCurveTo(reed.x + reed.lean * 0.25 + sway, this.waterY - reed.h * 0.55, reed.x + reed.lean + sway, this.waterY - reed.h);
+            ctx.stroke();
+        });
+
+        ctx.restore();
+    }
+
+    drawUnderwaterDetails(ctx, w, h, now) {
+        ctx.save();
+
+        const depthGlow = ctx.createRadialGradient(w * 0.5, this.waterY + 35, 30, w * 0.5, h, w * 0.72);
+        depthGlow.addColorStop(0, this.timeOfDay === 'night' ? 'rgba(34, 234, 255, 0.12)' : 'rgba(100, 255, 205, 0.14)');
+        depthGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = depthGlow;
+        ctx.fillRect(0, this.waterY, w, h - this.waterY);
+
+        ctx.globalAlpha = this.timeOfDay === 'night' ? 0.13 : 0.2;
+        ctx.strokeStyle = '#9fffe3';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < 7; i++) {
+            const x = 80 + i * 135 + Math.sin(now / 1300 + i) * 22;
+            ctx.beginPath();
+            ctx.moveTo(x, this.waterY + 4);
+            ctx.lineTo(x - 62, h);
+            ctx.stroke();
+        }
+
+        ctx.globalAlpha = 0.45;
+        this.scenery.pebbles.forEach(pebble => {
+            const tone = Math.floor(52 + pebble.tone * 38);
+            ctx.fillStyle = `rgb(${tone}, ${tone + 12}, ${tone + 18})`;
+            ctx.beginPath();
+            ctx.ellipse(pebble.x, pebble.y, pebble.r * 1.8, pebble.r, 0, 0, Math.PI * 2);
+            ctx.fill();
+        });
 
         ctx.restore();
     }
