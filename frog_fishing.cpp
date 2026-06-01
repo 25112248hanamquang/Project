@@ -263,10 +263,12 @@ void Fish::draw(sf::RenderWindow& window) {}
 Bird::Bird(float x, float y) : GameObject(x, y, 32.0f, 20.0f) {
     velocity.x = getRandomFloat(80.0f, 140.0f); // Bay ngang
     velocity.y = 0.0f;
+    wingFlap = 0.0f;
 }
 
 void Bird::update(float dt) {
     if (!active) return;
+    wingFlap += dt * 12.0f;
     position.x += velocity.x * dt;
     
     if (position.x > 960.0f) {
@@ -446,8 +448,9 @@ void Game::update(float dt) {
         envTimer = 30.0f;
         wind.change();
         
-        // Chuyển chu kỳ ngày đêm
-        if (currentTimeOfDay == TimeOfDay::MORNING) currentTimeOfDay = TimeOfDay::NIGHT;
+        // Chuyển chu kỳ ngày đêm: MORNING -> EVENING -> NIGHT -> MORNING
+        if (currentTimeOfDay == TimeOfDay::MORNING) currentTimeOfDay = TimeOfDay::EVENING;
+        else if (currentTimeOfDay == TimeOfDay::EVENING) currentTimeOfDay = TimeOfDay::NIGHT;
         else currentTimeOfDay = TimeOfDay::MORNING;
     }
 

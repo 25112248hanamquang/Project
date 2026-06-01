@@ -85,7 +85,7 @@ classDiagram
 
     class Hook {
         +state: string
-        +startPos: Point
+        +startPosition: Point
         +angle: float
         +power: float
         +time: float
@@ -151,7 +151,7 @@ classDiagram
         +activeBossBattle: boolean
         +bossHP: float
         +bossTension: float
-        +bossSafeZone: Range
+        +bossSafeZone: {min: float, max: float}
         +setupInput() void
         +start(mode) void
         +spawnFrogs() void

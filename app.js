@@ -551,7 +551,7 @@ class Hook extends GameObject {
         // 'caught': Đã đớp trúng ếch và đang kéo về cần
         // 'snapped': Đứt dây câu
         this.state = 'idle';
-        this.startPos = { x: x, y: y }; // Ngọn cần câu
+        this.startPosition = { x: x, y: y }; // Ngọn cần câu
         this.angle = -Math.PI / 4; // Góc quăng mặc định
         this.power = 300; // Lực ném cơ bản
         this.time = 0; // Biến đếm thời gian bay vật lý
@@ -585,8 +585,8 @@ class Hook extends GameObject {
         this.vx = Math.cos(angle) * power;
         this.vy = Math.sin(angle) * power;
         
-        this.startPos.x = this.x;
-        this.startPos.y = this.y;
+        this.startPosition.x = this.x;
+        this.startPosition.y = this.y;
         sounds.playCast();
     }
 
@@ -609,8 +609,8 @@ class Hook extends GameObject {
                 const gravity = 550; // Trọng lực ảo
                 const windForce = wind.direction * wind.strength * 45; // Lực đẩy của gió
                 
-                this.x = this.startPos.x + this.vx * this.time + 0.5 * windForce * this.time * this.time;
-                this.y = this.startPos.y + this.vy * this.time + 0.5 * gravity * this.time * this.time;
+                this.x = this.startPosition.x + this.vx * this.time + 0.5 * windForce * this.time * this.time;
+                this.y = this.startPosition.y + this.vy * this.time + 0.5 * gravity * this.time * this.time;
 
                 // Kiểm tra va chạm mặt nước
                 if (this.y >= waterY) {

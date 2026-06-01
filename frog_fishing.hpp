@@ -231,6 +231,9 @@ public:
  * Chướng ngại vật bay ngang bầu trời cướp mất mồi câu.
  */
 class Bird : public GameObject {
+private:
+    float wingFlap;
+
 public:
     Bird(float x, float y);
     void update(float dt) override;
