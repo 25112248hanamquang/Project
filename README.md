@@ -151,7 +151,8 @@ classDiagram
         +activeBossBattle: boolean
         +bossHP: float
         +bossTension: float
-        +bossSafeZone: {min: float, max: float}
+        +bossSafeZoneMin: float
+        +bossSafeZoneMax: float
         +setupInput() void
         +start(mode) void
         +spawnFrogs() void
