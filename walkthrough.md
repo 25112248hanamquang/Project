@@ -20,7 +20,7 @@ cmake --build build
 ## Cac diem da dong bo
 
 - UML va code deu dung `startPosition` cho diem xuat phat cua hook.
-- Boss safe zone trong UML duoc mo ta la object `{min, max}`, khop voi `app.js`.
+- Boss safe zone trong UML duoc mo ta bang hai truong `bossSafeZoneMin` va `bossSafeZoneMax` khop hoan toan voi code C++ va logi: `app.js`.
 - `Bird` co `wingFlap` trong JavaScript, UML, va C++ header/source.
 - Chu ky thoi gian C++ di qua du 3 pha: `MORNING -> EVENING -> NIGHT -> MORNING`.
 - Trang thai `SNAPPED` cua hook duoc reset, tranh ket hook vinh vien.
