@@ -25,6 +25,23 @@ namespace sf {
         float y;
         Vector2f(float _x = 0.0f, float _y = 0.0f) : x(_x), y(_y) {}
     };
+
+    inline Vector2f operator+(const Vector2f& a, const Vector2f& b) {
+        return Vector2f(a.x + b.x, a.y + b.y);
+    }
+
+    inline Vector2f operator-(const Vector2f& a, const Vector2f& b) {
+        return Vector2f(a.x - b.x, a.y - b.y);
+    }
+
+    inline Vector2f operator*(const Vector2f& v, float scalar) {
+        return Vector2f(v.x * scalar, v.y * scalar);
+    }
+
+    inline Vector2f operator*(float scalar, const Vector2f& v) {
+        return v * scalar;
+    }
+
     class RenderWindow {}; // Giả lập lớp cửa sổ vẽ của SFML
 }
 

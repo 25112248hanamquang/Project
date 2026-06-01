@@ -332,7 +332,8 @@ void Game::spawnEntities() {
         // Xác định ngẫu nhiên loại ếch
         FrogType type = FrogType::NORMAL;
         float r = getRandomFloat(0.0f, 1.0f);
-        if (r < 0.15f) type = FrogType::RARE;
+        if (currentTimeOfDay == TimeOfDay::NIGHT && r < 0.20f) type = FrogType::MAGICAL;
+        else if (r < 0.15f) type = FrogType::RARE;
         else if (r < 0.30f) type = FrogType::POISON;
         
         objects.push_back(std::make_shared<Frog>(rx, ry, type));
@@ -500,6 +501,12 @@ void Game::update(float dt) {
                 }
             }
         }
+    } else if (hook->getState() == HookState::SNAPPED) {
+        isBossBattleActive = false;
+        if (hook->getCaughtObject()) {
+            hook->getCaughtObject()->setActive(false);
+        }
+        hook->reset(rodTipPosition.x, rodTipPosition.y);
     }
 
     // 3. Cập nhật các sinh vật
